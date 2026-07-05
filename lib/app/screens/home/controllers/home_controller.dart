@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:animated_snack_bar/animated_snack_bar.dart';
@@ -19,6 +20,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
 import '../../../../shared/color/app_color.dart';
+import '../../../controller/home_nav_controller.dart';
+import '../../../data/api/socket_client.dart';
 import '../../../models/pincode_model.dart';
 import '../../../routes/app_routes.dart';
 
@@ -69,15 +72,24 @@ class HomeController extends GetxController{
 
   RxList<ReelModel> reels = <ReelModel>[].obs;
 
+  final SocketService _socket = SocketService.instance;
+  SocketListener? _conversationUpdatedListener;
+  SocketListener? _conversationSeenListener;
+
+
+
+
+
   @override
   Future<void> onInit() async{
-    await Geolocator.requestPermission();
+    Geolocator.requestPermission();
     await getAllCategories();
     await getAllVehicles();
     getWishlist();
     await getPopularVehicles();
     await getShorts();
     isLoading.value = false;
+    _setupSocket();
     super.onInit();
   }
 
@@ -369,6 +381,29 @@ class HomeController extends GetxController{
       );
       throw Exception("No address found for these coordinates.");
     }
+  }
+
+  void _setupSocket() {
+    Get.find<BottomNavController>().getUnseenChat();
+    _socket.connect();
+    _conversationUpdatedListener = _socket.onConversationUpdated((data) {
+      Get.find<BottomNavController>().getUnseenChat();
+    });
+    _conversationSeenListener = _socket.onConversationSeen((data) {
+      Get.find<BottomNavController>().getUnseenChat();
+    });
+  }
+
+  @override
+  void onClose() {
+    _socket.disconnect();
+    if (_conversationUpdatedListener != null) {
+      _socket.offConversationUpdated(_conversationUpdatedListener);
+    }
+    if (_conversationSeenListener != null) {
+      _socket.offConversationSeen(_conversationSeenListener);
+    }
+    super.onClose();
   }
 
 }

@@ -8,6 +8,7 @@ import 'package:cars_and_alll/app/utils/customSnackBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import '../../../../data/api/socket_client.dart';
 import '../../../../models/buyerChatModel.dart';
 
 class ChatSpaceController extends GetxController {
@@ -25,10 +26,24 @@ class ChatSpaceController extends GetxController {
 
   RxBool autoFollowUp = false.obs;
 
+
+  // Read-receipt tracking, kept up to date by the `conversationSeen` socket
+  // event (populated from topBar.value on initial fetch too).
+
+  Rxn<DateTime> lastSeenByBuyer = Rxn<DateTime>();
+  Rxn<DateTime> lastSeenBySeller = Rxn<DateTime>();
+
+  final SocketService _socket = SocketService.instance;
+  SocketListener? _newMessageListener;
+  SocketListener? _conversationSeenListener;
+  bool _joinedRoom = false;
+
+
   @override
   void onInit() {
     super.onInit();
     conversationId = Get.arguments["conversationId"]?? "";
+    _setupSocket();
   }
 
   @override
@@ -85,9 +100,6 @@ class ChatSpaceController extends GetxController {
         },
         onSuccess: (res) {
           message.clear();
-          messages.insert(0, ConversationModel.fromJson(res.body["data"]['latestMessage']));
-          log("RECEIVING DATA" + res.body["data"].toString());
-          log(messages.first.toString());
         },
         onError: (res) {
           customSnackBar(
@@ -102,5 +114,69 @@ class ChatSpaceController extends GetxController {
         message: "Message cannot be empty",
       );
     }
+  }
+
+  void _setupSocket() {
+    if (conversationId.isEmpty) return;
+
+    _socket.connect();
+    _socket.joinConversation(conversationId);
+    _joinedRoom = true;
+
+    _newMessageListener = _socket.onNewMessage((data) {
+      final latestRaw = data['latestMessage'];
+      if (latestRaw == null) return;
+      log(data.toString());
+      final incoming = ConversationModel.fromJson(latestRaw);
+
+      messages.insert(0, incoming);
+
+      final rest = data['restObject'];
+      if (rest != null) {
+        if (rest['autoFollowUp'] != null) {
+          autoFollowUp.value = rest['autoFollowUp'] as bool;
+        }
+        if (rest['lastSeenByBuyer'] != null) {
+          lastSeenByBuyer.value = DateTime.tryParse(rest['lastSeenByBuyer']);
+        }
+        if (rest['lastSeenBySeller'] != null) {
+          lastSeenBySeller.value = DateTime.tryParse(rest['lastSeenBySeller']);
+        }
+      }
+
+      // Notify only when the incoming message is from the other party.
+      final isFromOtherUser = incoming.sender?.id != UserStore.to.uid.value;
+      if (isFromOtherUser) {
+        customSnackBar(
+          type: AnimatedSnackBarType.success,
+          message: "New message from ${otherUser.value.userName ?? 'user'}",
+        );
+      }
+    });
+
+    _conversationSeenListener = _socket.onConversationSeen((data) {
+      if (data['conversationId'] != conversationId) return;
+      if (data['lastSeenByBuyer'] != null) {
+        lastSeenByBuyer.value = DateTime.tryParse(data['lastSeenByBuyer']);
+      }
+      if (data['lastSeenBySeller'] != null) {
+        lastSeenBySeller.value = DateTime.tryParse(data['lastSeenBySeller']);
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    if (_newMessageListener != null) {
+      _socket.offNewMessage(_newMessageListener);
+    }
+    if (_conversationSeenListener != null) {
+      _socket.offConversationSeen(_conversationSeenListener);
+    }
+    if (_joinedRoom && conversationId.isNotEmpty) {
+      _socket.leaveConversation(conversationId);
+    }
+    message.dispose();
+    super.onClose();
   }
 }

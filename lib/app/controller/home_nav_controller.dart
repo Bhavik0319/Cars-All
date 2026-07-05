@@ -18,6 +18,11 @@ class BottomNavController extends GetxController {
     this.index.value = index;
   }
 
+  @override
+  void onInit() {
+    super.onInit();
+  }
+
   Future<void> getUnseenChat() async {
     await ApiClient.to.getUnseen(
       onSuccess: (res) {

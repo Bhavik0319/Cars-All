@@ -1,31 +1,29 @@
 import 'package:cars_and_alll/app/services/user.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
-import 'package:shared_preferences/shared_preferences.dart';
+
+/// A listener handle returned by the `onXxx` methods below. Pass the exact
+/// same instance back into the matching `offXxx` method to remove only that
+/// listener — plain `socket.off(event)` would wipe out every listener for
+/// that event, including ones registered by other controllers.
+typedef SocketListener = void Function(dynamic data);
 
 class SocketService {
   SocketService._internal();
   static final SocketService instance = SocketService._internal();
 
   static const String apiLink = 'https://carsandallapi.onrender.com';
-  static const String tokenKey = '_carsandall_client_access_token';
 
   io.Socket? _socket;
+
+  /// Lazily creates the socket the first time it's needed, instead of
+  /// requiring every call site to remember to `await init()` first and win
+  /// the race against it. Safe to call repeatedly — a no-op once `_socket`
+  /// exists.
+  ///
+  /// (UserStore.to.getToken() reads synchronously from GetStorage, so
+  /// there's nothing here that actually needs to be async.)
   io.Socket get socket {
-    assert(_socket != null, 'Call SocketService.instance.init() first');
-    return _socket!;
-  }
-
-  bool get isConnected => _socket?.connected ?? false;
-
-  /// Call once at app startup (e.g. in main() or a top-level provider),
-  /// mirroring the module-level `const socket = io(...)` in JS.
-  Future<void> init() async {
-    if (_socket != null) return;
-
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(tokenKey);
-
-    _socket = io.io(
+    _socket ??= io.io(
       apiLink,
       io.OptionBuilder()
           .setTransports(['websocket'])
@@ -33,6 +31,17 @@ class SocketService {
           .setAuth({'token': UserStore.to.getToken()})
           .build(),
     );
+    return _socket!;
+  }
+
+  bool get isConnected => _socket?.connected ?? false;
+
+  /// Optional explicit call at app startup — kept for readability at call
+  /// sites (e.g. `main.dart`) and API compatibility, but no longer load-
+  /// bearing: the `socket` getter above self-initializes regardless.
+  void init() {
+    // ignore: unnecessary_statements
+    socket; // touch the getter to force creation
   }
 
   /// Refresh the auth token (e.g. after login) before connecting.
@@ -57,24 +66,38 @@ class SocketService {
     socket.emit('leaveConversation', {'conversationId': conversationId});
   }
 
-  void onNewMessage(void Function(Map<String, dynamic> data) handler) {
-    socket.on('newMessage', (data) => handler(Map<String, dynamic>.from(data)));
+  // ---------------- newMessage ----------------
+
+  SocketListener onNewMessage(void Function(Map<String, dynamic> data) handler) {
+    void listener(dynamic data) => handler(Map<String, dynamic>.from(data));
+    socket.on('newMessage', listener);
+    return listener;
   }
 
-  void offNewMessage() => socket.off('newMessage');
+  void offNewMessage([SocketListener? listener]) =>
+      socket.off('newMessage', listener);
 
-  void onConversationUpdated(
+  // ---------------- conversationUpdated ----------------
+
+  SocketListener onConversationUpdated(
       void Function(Map<String, dynamic> data) handler) {
-    socket.on(
-        'conversationUpdated', (data) => handler(Map<String, dynamic>.from(data)));
+    void listener(dynamic data) => handler(Map<String, dynamic>.from(data));
+    socket.on('conversationUpdated', listener);
+    return listener;
   }
 
-  void offConversationUpdated() => socket.off('conversationUpdated');
+  void offConversationUpdated([SocketListener? listener]) =>
+      socket.off('conversationUpdated', listener);
 
-  void onConversationSeen(void Function(Map<String, dynamic> data) handler) {
-    socket.on(
-        'conversationSeen', (data) => handler(Map<String, dynamic>.from(data)));
+  // ---------------- conversationSeen ----------------
+
+  SocketListener onConversationSeen(
+      void Function(Map<String, dynamic> data) handler) {
+    void listener(dynamic data) => handler(Map<String, dynamic>.from(data));
+    socket.on('conversationSeen', listener);
+    return listener;
   }
 
-  void offConversationSeen() => socket.off('conversationSeen');
+  void offConversationSeen([SocketListener? listener]) =>
+      socket.off('conversationSeen', listener);
 }

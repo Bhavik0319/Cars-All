@@ -38,14 +38,19 @@ class UserSelection extends GetView<AuthController> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: scale.getPadding(
-                      left: 10,
-                      right: 82,
-                    ),
-                    child: Image.asset(
-                      AssetConstant.arrowBack,
-                      height: scale.getScaledHeight(15),
+                  GestureDetector(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: Padding(
+                      padding: scale.getPadding(
+                        left: 10,
+                        right: 82,
+                      ),
+                      child: Image.asset(
+                        AssetConstant.arrowBack,
+                        height: scale.getScaledHeight(15),
+                      ),
                     ),
                   ),
                   CircleAvatar(

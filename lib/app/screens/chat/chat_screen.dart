@@ -149,20 +149,16 @@ class ChatScreen extends GetView<ChatController> {
                                                   const SizedBox(height: 4),
                                                   Obx(() {
                                                     var navController = Get.find<BottomNavController>();
-                                                    List<ChatRoom> buyerChat = navController.unseenChat.value.data!.where((e) => e.buyerId!.id == controller.buyerChat[index].buyer!.id).toList();
+                                                    ChatRoom? buyerChat = navController.unseenChat.value.data!.firstWhereOrNull((e) => e.buyerId!.id == controller.buyerChat[index].buyer!.id && controller.sellerChat[index].id == e.id);
 
-                                                    int totalUnseen = buyerChat.fold(0, (sum, room) {
-                                                      int unseenInRoom = room.messages?.where((m) => m.senderId?.id != UserStore.to.uid.value).length ?? 0;
-                                                      return sum + unseenInRoom;
-                                                    });
-                                                    return totalUnseen > 0 ? Container(
+                                                    return buyerChat != null && buyerChat.unseenCount! > 0 ? Container(
                                                       padding: const EdgeInsets.all(6),
                                                       decoration: const BoxDecoration(
                                                         color: Colors.red,
                                                         shape: BoxShape.circle,
                                                       ),
                                                       child: Text(
-                                                        '$totalUnseen',
+                                                        '${buyerChat.unseenCount}',
                                                         style: const TextStyle(color: Colors.white, fontSize: 10),
                                                       ),
                                                     ) : const SizedBox.shrink();
@@ -227,20 +223,16 @@ class ChatScreen extends GetView<ChatController> {
                                                   const SizedBox(height: 4),
                                                   Obx(() {
                                                     var navController = Get.find<BottomNavController>();
-                                                    List<ChatRoom> buyerChat = navController.unseenChat.value.data!.where((e) => e.sellerId!.id == controller.sellerChat[index].seller!.id).toList();
+                                                    ChatRoom? sellerChat = navController.unseenChat.value.data!.firstWhereOrNull((e) => e.sellerId!.id == controller.sellerChat[index].seller!.id && controller.sellerChat[index].id == e.id);
 
-                                                    int totalUnseen = buyerChat.fold(0, (sum, room) {
-                                                      int unseenInRoom = room.messages?.where((m) => m.senderId?.id != UserStore.to.uid.value).length ?? 0;
-                                                      return sum + unseenInRoom;
-                                                    });
-                                                    return totalUnseen > 0 ? Container(
+                                                    return sellerChat != null && sellerChat.unseenCount! > 0 ? Container(
                                                       padding: const EdgeInsets.all(6),
                                                       decoration: const BoxDecoration(
                                                         color: Colors.red,
                                                         shape: BoxShape.circle,
                                                       ),
                                                       child: Text(
-                                                        '$totalUnseen',
+                                                        '${sellerChat.unseenCount}',
                                                         style: const TextStyle(color: Colors.white, fontSize: 10),
                                                       ),
                                                     ) : const SizedBox.shrink();

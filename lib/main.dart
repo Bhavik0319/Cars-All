@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 
+import 'app/controller/home_nav_controller.dart';
 import 'app/data/api/api_client.dart';
 import 'app/routes/app_router.dart';
 import 'app/routes/app_routes.dart';
@@ -35,9 +36,9 @@ Future<void> main() async {
   await Get.putAsync<StorageService>(() => StorageService().init());
   Get.put<ApiClient>(ApiClient());
   Get.put<UserStore>(UserStore());
+  Get.put(BottomNavController());
   Get.put<AuthServices>(AuthServices());
-
-  await di.init();
+  // await di.init();
 
   runApp(
     EasyLocalization(
@@ -80,9 +81,15 @@ class MyApp extends StatelessWidget {
           localizationsDelegates: context.localizationDelegates,
           themeMode: ThemeMode.light,
           builder: (context, child) {
-            return Directionality(
-              textDirection: ui.TextDirection.ltr,
-              child: child!,
+            final mediaQueryData = MediaQuery.of(context);
+            return MediaQuery(
+              data: mediaQueryData.copyWith(
+                textScaler: TextScaler.noScaling
+              ),
+              child: Directionality(
+                textDirection: ui.TextDirection.ltr,
+                child: child!,
+              ),
             );
           },
         );

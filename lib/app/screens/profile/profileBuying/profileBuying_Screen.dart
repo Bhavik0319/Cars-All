@@ -15,7 +15,6 @@ import '../controller/controller.dart';
 class ProfileBuyingScreen extends GetView<ProfileController> {
   const ProfileBuyingScreen({super.key});
 
-  static bool isSwitched = true;
 
   @override
   Widget build(BuildContext context) {
@@ -382,14 +381,18 @@ class ProfileBuyingScreen extends GetView<ProfileController> {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                trailing: Switch(
-                  value: isSwitched,
-                  activeTrackColor: AppColors.secondaryLight,
-                  activeColor: Colors.white,
-                  inactiveThumbColor: AppColors.primaryLight,
-                  onChanged: (e) {
-                    isSwitched = !isSwitched;
-                  },
+                trailing: Obx(
+                  () {
+                    return Switch(
+                      value: controller.isSwitched.value,
+                      activeTrackColor: AppColors.secondaryLight,
+                      activeColor: Colors.white,
+                      inactiveThumbColor: AppColors.primaryLight,
+                      onChanged: (e) {
+                        controller.checkNotificationPermission();
+                      },
+                    );
+                  }
                 ),
               ),
 

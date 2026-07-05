@@ -55,6 +55,7 @@ class UserStore extends GetxController {
     await StorageService.to.remove(userIdKey);
     await StorageService.to.remove(followUpKey);
     await StorageService.to.remove(vehicleListKey);
+    await StorageService.to.remove(userBearerToken);
     _isLogin.value = false;
     uid.value = '';
     Get.offAllNamed(AppRoutes.loginWithPhone);

@@ -3,7 +3,6 @@ import 'package:cars_and_alll/app/screens/financialAssistance/controller/financi
 import 'package:cars_and_alll/shared/color/app_color.dart';
 import 'package:cars_and_alll/shared/theme/custom_text_style.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 
@@ -149,53 +148,49 @@ class ApplicationStatusScreen extends GetView<FinancialAssistController> {
                       context: context,
                       removeBottom: true,
                       removeTop: true,
-                      child: Consumer(
-                          builder: (context, ref, child) {
-                            return ListView.builder(
-                              itemCount: controller.financialAssistComponent.length,
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                return Container(
-                                  margin: scale.getMargin(
-                                    bottom: 10,
-                                    right: 35,
-                                    left: 19,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 3,
-                                        child: Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Text(
-                                            controller.financialAssistComponent[index],
-                                            style: CustomTextStyle.txtPoppins10W400.copyWith(
-                                              fontSize: scale.getScaledFont(10),
-                                              color: AppColors.black,
-                                            ),
-                                          ),
-                                        ),
+                      child: ListView.builder(
+                        itemCount: controller.financialAssistComponent.length,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Container(
+                            margin: scale.getMargin(
+                              bottom: 10,
+                              right: 35,
+                              left: 19,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      controller.financialAssistComponent[index],
+                                      style: CustomTextStyle.txtPoppins10W400.copyWith(
+                                        fontSize: scale.getScaledFont(10),
+                                        color: AppColors.black,
                                       ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Align(
-                                          alignment: Alignment.topRight,
-                                          child: Text(
-                                            controller.financialAssistComponentValues[index],
-                                            style: CustomTextStyle.txtPoppins10W400.copyWith(
-                                              fontSize: scale.getScaledFont(10),
-                                              color: AppColors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
-                                );
-                              },
-                            );
-                          }
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Align(
+                                    alignment: Alignment.topRight,
+                                    child: Text(
+                                      controller.financialAssistComponentValues[index],
+                                      style: CustomTextStyle.txtPoppins10W400.copyWith(
+                                        fontSize: scale.getScaledFont(10),
+                                        color: AppColors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],

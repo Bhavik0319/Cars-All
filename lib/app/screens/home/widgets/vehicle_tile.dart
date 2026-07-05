@@ -33,7 +33,7 @@ class VehicleTile extends StatelessWidget {
         }
       },
       child: Container(
-        width: scale.getScaledWidth(165),
+        width: scale.getScaledWidth(162),
         // height: scale.getScaledHeight(200),
         margin: scale.getMargin(
           horizontal: 3,
@@ -139,6 +139,7 @@ class VehicleTile extends StatelessWidget {
                 spacing: 15,
                 runSpacing: 8,
                 children: [
+                  if(vehicleModel.vehicleFilters!.registrationYear != null)
                   DecoratedContainer(
                     padding: scale.getPadding(
                       horizontal: 5,
@@ -155,6 +156,7 @@ class VehicleTile extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if(vehicleModel.vehicleFilters!.kmsDriven != null)
                   DecoratedContainer(
                     padding: scale.getPadding(
                       horizontal: 5,
@@ -171,6 +173,7 @@ class VehicleTile extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if(vehicleModel.vehicleFilters!.transmissionType != "")
                   DecoratedContainer(
                     padding: scale.getPadding(
                       horizontal: 5,
@@ -187,6 +190,7 @@ class VehicleTile extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if(vehicleModel.vehicleFilters!.fuelType != null)
                   DecoratedContainer(
                     padding: scale.getPadding(
                       horizontal: 5,
@@ -203,6 +207,7 @@ class VehicleTile extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if(vehicleModel.vehicleFilters!.ownerType != '')
                   DecoratedContainer(
                     padding: scale.getPadding(
                       horizontal: 5,

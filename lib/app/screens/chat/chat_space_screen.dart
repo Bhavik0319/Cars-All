@@ -221,13 +221,6 @@ class ChatSpaceScreen extends GetView<ChatSpaceController> {
                               horizontal: 14,
                               vertical: 10,
                             ),
-                            suffixIcon: Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: CircleAvatar(
-                                backgroundColor: AppColors.secondaryLight,
-                                child: const Icon(Icons.mic, color: Colors.white),
-                              ),
-                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(25),
                               borderSide: BorderSide(

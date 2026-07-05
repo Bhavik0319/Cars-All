@@ -90,9 +90,10 @@ class ViewAllVehicles extends GetView<ViewAllController> {
                             horizontal: 10,
                           ),
                           padding: scale.getPadding(
-                            left: 10
+                            left: 10,
+                            top: 4
                           ),
-                          height: scale.getScaledHeight(30),
+                          height: scale.getScaledHeight(40),
                           decoration: BoxDecoration(
                             color: controller.isLux.value ? Colors.transparent : (controller.selectedSubCategory.value == 'premium' || controller.selectedSubCategory.value == 'luxury') ? Colors.transparent : AppColors.white,
                             borderRadius: BorderRadius.circular(16),

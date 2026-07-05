@@ -2,7 +2,6 @@ import 'package:cars_and_alll/app/screens/car_details/controller/carDetailContro
 import 'package:cars_and_alll/app/screens/home/controllers/category_controller.dart';
 import 'package:cars_and_alll/app/screens/home/widgets/category_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 

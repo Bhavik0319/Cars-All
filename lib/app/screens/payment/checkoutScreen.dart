@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CheckoutScreen extends ConsumerStatefulWidget {
+class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
 
   @override
-  ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
+  State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
-class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
+class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     return const Placeholder();

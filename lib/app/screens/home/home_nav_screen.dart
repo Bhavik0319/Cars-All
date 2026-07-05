@@ -14,7 +14,6 @@ import 'package:cars_and_alll/shared/theme/theme_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:super_tooltip/super_tooltip.dart';
@@ -25,6 +24,7 @@ import '../../models/enum/nested_navigation.dart';
 import '../../services/user.dart';
 import '../../utils/scale_utility.dart';
 import '../chat/chat_screen.dart';
+import '../search/coming_soon_screen.dart';
 import 'views/category_screen.dart';
 import '../chat/chat_space_screen.dart';
 import 'views/reels_screen.dart';
@@ -34,7 +34,6 @@ class HomeNavScreen extends GetView<BottomNavController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.getUnseenChat();
     ScalingUtility scale = ScalingUtility(context: context)
       ..setCurrentDeviceSize();
 
@@ -56,10 +55,9 @@ class HomeNavScreen extends GetView<BottomNavController> {
                 page: () => ChatScreen(),
                 binding: ChatBinding(),
               );
-            case AppRoutes.reelsScreen:
+            case AppRoutes.comingSoonScreen:
               return GetPageRoute(
-                page: () => ReelsScreen(),
-                binding: ReelsBinding(),
+                page: () => ComingSoonScreen(),
               );
             case AppRoutes.serviceScreen:
               return GetPageRoute(
@@ -103,7 +101,7 @@ class HomeNavScreen extends GetView<BottomNavController> {
           right: 20,
           top: 10,
         ),
-        height: scale.getScaledHeight(60),
+        height: scale.getScaledHeight(55),
         color: AppColors.white,
         shape: CircularNotchedRectangle(),
         child: Row(
@@ -197,6 +195,7 @@ class HomeNavScreen extends GetView<BottomNavController> {
               child: Column(
                 children: [
                   Stack(
+                    clipBehavior: Clip.none,
                     children: [
                       Obx(
                         () {
@@ -210,10 +209,10 @@ class HomeNavScreen extends GetView<BottomNavController> {
                       Obx((){
                         if (controller.unseenChat.value.summary?.totalUnseen != null && controller.unseenChat.value.summary!.totalUnseen! > 0) {
                           return Positioned(
-                            top: -4,
-                            right: -5,
+                            top: -6,
+                            right: -19,
                             child: Container(
-                              padding: const EdgeInsets.all(4),
+                              padding: const EdgeInsets.all(5),
                               margin: scale.getMargin(
                                 left: 2,
                                 right: 6
@@ -242,7 +241,6 @@ class HomeNavScreen extends GetView<BottomNavController> {
                           return Container();
                         }
                       }),
-              
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -265,7 +263,7 @@ class HomeNavScreen extends GetView<BottomNavController> {
             GestureDetector(
               onTap: () {
                 if(controller.index.value != 3) {
-                  Get.toNamed(AppRoutes.reelsScreen);
+                  Get.toNamed(AppRoutes.comingSoonScreen);
                 }
               },
               child: Column(

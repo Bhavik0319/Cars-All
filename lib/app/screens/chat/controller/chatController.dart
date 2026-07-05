@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:animated_snack_bar/animated_snack_bar.dart';
@@ -9,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../../controller/home_nav_controller.dart';
+import '../../../data/api/socket_client.dart';
 import '../../../models/buyerChatModel.dart';
 
 class ChatController extends GetxController with GetTickerProviderStateMixin {
@@ -25,10 +27,16 @@ class ChatController extends GetxController with GetTickerProviderStateMixin {
   RxBool isSellerChatLoading = true.obs;
   RxBool isBuyerChatLoading = true.obs;
 
+  final SocketService _socket = SocketService.instance;
+  SocketListener? _conversationUpdatedListener;
+  SocketListener? _conversationSeenListener;
+  Timer? _refreshDebounce;
+
 
   @override
   void onInit() {
     super.onInit();
+    Get.find<BottomNavController>().getUnseenChat();
     tabController = TabController(length: 2, vsync: this);
     tabController.addListener(() {
       if (!tabController.indexIsChanging) {
@@ -37,8 +45,8 @@ class ChatController extends GetxController with GetTickerProviderStateMixin {
           getSellerChat();
         }
       }
-      Get.find<BottomNavController>().getUnseenChat();
     });
+    _setupSocket();
   }
 
   onRefresh() async{
@@ -107,6 +115,51 @@ class ChatController extends GetxController with GetTickerProviderStateMixin {
         refreshController.refreshFailed();
       },
     );
+  }
+
+  void _setupSocket() {
+    _socket.connect();
+    _conversationUpdatedListener = _socket.onConversationUpdated((data) {
+      log("Conversation update: $data");
+      _handleLiveUpdate(data);
+    });
+    _conversationSeenListener = _socket.onConversationSeen((data) {
+      _handleLiveUpdate(data);
+      log("Conversation seen: $data");
+    });
+  }
+
+  /// The Seller/Buyer chat models here don't currently support in-place
+  /// patching (no copyWith), so on any live update we simply refetch the
+  /// visible tab plus the unseen-count badge. Debounced so a burst of
+  /// events (e.g. multiple messages arriving together) triggers one
+  /// refetch instead of several.
+  void _handleLiveUpdate(data) {
+    _refreshDebounce?.cancel();
+    _refreshDebounce = Timer(const Duration(milliseconds: 400), () {
+      if(currentIndex.value == 0){
+        if(!(buyerChat.any((element) => element.id == data['conversationId']))){
+          getBuyerChat();
+        }
+      } else {
+        if(!(sellerChat.any((element) => element.id == data['conversationId']))){
+          getSellerChat();
+        }
+      }
+      Get.find<BottomNavController>().getUnseenChat();
+    });
+  }
+
+  @override
+  void onClose() {
+    _refreshDebounce?.cancel();
+    if (_conversationUpdatedListener != null) {
+      _socket.offConversationUpdated(_conversationUpdatedListener);
+    }
+    if (_conversationSeenListener != null) {
+      _socket.offConversationSeen(_conversationSeenListener);
+    }
+    super.onClose();
   }
 
 }

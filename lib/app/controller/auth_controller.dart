@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:cars_and_alll/app/constants/text_data.dart';
+import 'package:cars_and_alll/app/controller/home_nav_controller.dart';
 import 'package:cars_and_alll/app/data/api/api_client.dart';
 import 'package:cars_and_alll/app/routes/app_routes.dart';
+import 'package:cars_and_alll/app/screens/home/controllers/home_controller.dart';
 import 'package:cars_and_alll/app/services/storage.dart';
 import 'package:cars_and_alll/app/services/user.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +27,7 @@ class AuthController extends GetxController {
   String verId = "";
   RxBool agreeToTermsLoginPage = false.obs;
   var showCheckboxError = false.obs;
+  var showCheckboxErrorRegister = false.obs;
 
   ///Register Variables
 
@@ -82,6 +85,9 @@ class AuthController extends GetxController {
                       );
                       UserStore.to.saveProfile(res.body["data"]);
                       log("user is ${UserStore.to.profile}");
+                      if(Get.isRegistered<BottomNavController>()){
+                        Get.find<BottomNavController>().getUnseenChat();
+                      }
                       Get.offAllNamed(AppRoutes.homeNav);
                     },
                     onError: (res) {

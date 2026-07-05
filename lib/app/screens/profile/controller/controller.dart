@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:cars_and_alll/app/services/storage.dart';
 import 'package:cars_and_alll/app/utils/customSnackBar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../data/api/api_client.dart';
 import '../../../services/user.dart';
@@ -16,6 +18,7 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
   RxDouble averageRating = 0.0.obs;
 
   RxBool shareMyNumber = false.obs;
+  RxBool isSwitched = false.obs;
 
   RxInt currentIndex = 0.obs;
 
@@ -33,7 +36,6 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
   void onInit() {
     super.onInit();
     tabController = TabController(length: 2, vsync: this);
-
     tabController.addListener(() {
       if (!tabController.indexIsChanging) {
         currentIndex.value = tabController.index;
@@ -41,6 +43,7 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
       }
     });
     performanceOverview();
+    checkNotificationPermission();
   }
 
   performanceOverview() {
@@ -102,6 +105,38 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
         );
       }
     );
+  }
+
+  Future<void> checkNotificationPermission() async {
+    // 1. Check current status
+    PermissionStatus status = await Permission.notification.status;
+    log("Current status: $status");
+
+    if(isSwitched.value){
+      isSwitched.value = false;
+    } else {
+      if (status.isGranted) {
+        log("Permission already granted");
+        isSwitched.value = true;
+      } else if (status.isDenied) {
+        log("Permission is denied. Requesting now...");
+
+        // 2. This actually prompts the user OS dialog
+        PermissionStatus newStatus = await Permission.notification.request();
+
+        if (newStatus.isGranted) {
+          log("Permission granted by user");
+          isSwitched.value = true;
+        } else {
+          log("Permission denied by user");
+          isSwitched.value = false;
+        }
+      } else if (status.isPermanentlyDenied) {
+        log("Permission permanently denied. Opening settings...");
+        isSwitched.value = false;
+        await openAppSettings();
+      }
+    }
   }
 
 }

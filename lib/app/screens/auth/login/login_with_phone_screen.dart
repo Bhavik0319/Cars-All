@@ -24,6 +24,7 @@ class LoginWithPhoneScreen extends GetView<AuthController> {
   LoginWithPhoneScreen({super.key});
 
   final _formKey = GlobalKey<FormState>();
+  final GlobalKey<TooltipState> tooltipKey = GlobalKey<TooltipState>();
 
   @override
   Widget build(BuildContext context) {
@@ -91,12 +92,15 @@ class LoginWithPhoneScreen extends GetView<AuthController> {
                       if(controller.agreeToTermsLoginPage.value) {
                         controller.loginUserByPhone();
                       } else {
+                        tooltipKey.currentState!.ensureTooltipVisible();
                         controller.showCheckboxError.value = true;
                       }
                     } else {
                       if(controller.agreeToTermsLoginPage.value) {
+                        tooltipKey.currentState!.ensureTooltipVisible();
                         controller.showCheckboxError.value = false;
                       } else {
+                        tooltipKey.currentState!.ensureTooltipVisible();
                         controller.showCheckboxError.value = true;
                       }
                     }
@@ -137,31 +141,36 @@ class LoginWithPhoneScreen extends GetView<AuthController> {
                     SizedBox(
                       width: 20,
                       height: 20,
-                      child: Obx(
-                         () {
-                            return Checkbox(
-                              value: controller.agreeToTermsLoginPage.value,
-                              onChanged: (value) {
-                                controller.agreeToTermsLoginPage.value = value ?? false;
-                              },
-                              activeColor: const Color(0xFFFFC107),
-                              fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-                                if (states.contains(WidgetState.selected)) {
-                                  return AppColors.secondaryLight;
-                                }
-                                return Colors.transparent;
-                              }),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              side: controller.showCheckboxError.value ? BorderSide(
-                                color: Colors.red,
-                                width: 2,
-                              ) : BorderSide(color: Colors.grey.shade300),
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      child: Tooltip(
+                        key: tooltipKey,
+                        message: 'Agree to terms and conditions',
+                        child: Obx(
+                           () {
+                              return Checkbox(
+                                value: controller.agreeToTermsLoginPage.value,
 
-                            );
-                          }
+                                onChanged: (value) {
+                                  controller.agreeToTermsLoginPage.value = value ?? false;
+                                },
+                                activeColor: const Color(0xFFFFC107),
+                                fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+                                  if (states.contains(WidgetState.selected)) {
+                                    return AppColors.secondaryLight;
+                                  }
+                                  return Colors.transparent;
+                                }),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                side: controller.showCheckboxError.value ? BorderSide(
+                                  color: Colors.red,
+                                  width: 2,
+                                ) : BorderSide(color: Colors.grey.shade300),
+                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+
+                              );
+                            }
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -191,7 +200,7 @@ class LoginWithPhoneScreen extends GetView<AuthController> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 15),
 
                 Text(
                   tr('or_signup'),
@@ -245,7 +254,7 @@ class LoginWithPhoneScreen extends GetView<AuthController> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -271,7 +280,7 @@ class LoginWithPhoneScreen extends GetView<AuthController> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
               ],
             ),
           ),

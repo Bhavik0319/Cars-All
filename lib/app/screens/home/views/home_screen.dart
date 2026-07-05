@@ -14,6 +14,7 @@ import 'package:lottie/lottie.dart';
 
 import '../../../../shared/color/app_color.dart';
 import '../../../constants/assetConstant.dart';
+import '../../../controller/home_nav_controller.dart';
 import '../../../utils/scale_utility.dart';
 import '../widgets/category_card_tile.dart';
 
@@ -331,7 +332,7 @@ class HomeScreen extends GetView<HomeController> {
                                   ),
                                 );
                               },
-                            ) : SizedBox(
+                            ) : false ? SizedBox(
                               width: scale.fw,
                               child: Column(
                                 children: [
@@ -346,6 +347,13 @@ class HomeScreen extends GetView<HomeController> {
                                     style: CustomTextStyle.txtPoppins14Black700,
                                   )
                                 ],
+                              ),
+                            ) : SizedBox(
+                              width: double.maxFinite,
+                              height: double.maxFinite,
+                              child: Image.asset(
+                                AssetConstant.comingSoon,
+                                fit: BoxFit.cover,
                               ),
                             );
                           }
