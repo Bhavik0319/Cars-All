@@ -34,7 +34,7 @@ class VehicleTile extends StatelessWidget {
       },
       child: Container(
         width: scale.getScaledWidth(162),
-        // height: scale.getScaledHeight(200),
+        height: scale.getScaledHeight(255),
         margin: scale.getMargin(
           horizontal: 3,
         ),

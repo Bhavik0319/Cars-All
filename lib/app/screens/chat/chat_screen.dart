@@ -149,7 +149,7 @@ class ChatScreen extends GetView<ChatController> {
                                                   const SizedBox(height: 4),
                                                   Obx(() {
                                                     var navController = Get.find<BottomNavController>();
-                                                    ChatRoom? buyerChat = navController.unseenChat.value.data!.firstWhereOrNull((e) => e.buyerId!.id == controller.buyerChat[index].buyer!.id && controller.sellerChat[index].id == e.id);
+                                                    ChatRoom? buyerChat = navController.unseenChat.value.data?.firstWhereOrNull((e) => e.buyerId!.id == controller.buyerChat[index].buyer!.id && controller.buyerChat[index].id == e.id);
 
                                                     return buyerChat != null && buyerChat.unseenCount! > 0 ? Container(
                                                       padding: const EdgeInsets.all(6),
@@ -223,7 +223,7 @@ class ChatScreen extends GetView<ChatController> {
                                                   const SizedBox(height: 4),
                                                   Obx(() {
                                                     var navController = Get.find<BottomNavController>();
-                                                    ChatRoom? sellerChat = navController.unseenChat.value.data!.firstWhereOrNull((e) => e.sellerId!.id == controller.sellerChat[index].seller!.id && controller.sellerChat[index].id == e.id);
+                                                    ChatRoom? sellerChat = navController.unseenChat.value.data?.firstWhereOrNull((e) => e.sellerId!.id == controller.sellerChat[index].seller!.id && controller.sellerChat[index].id == e.id);
 
                                                     return sellerChat != null && sellerChat.unseenCount! > 0 ? Container(
                                                       padding: const EdgeInsets.all(6),

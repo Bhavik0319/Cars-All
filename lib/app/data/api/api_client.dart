@@ -849,14 +849,24 @@ class ApiClient extends GetConnect implements GetxService {
 
   Future<void> postVehicle({
     required dynamic data,
+    required bool isVehicleEditMode,
     required Function(Response res) onSuccess,
-    required Function(Response error) onError,}) async {
+    required Function(Response error) onError, required String vehicleId,}) async {
     // try {
-      Response res = await httpClient.post(
-        '${ApiRoutes.baseUrl}${ApiRoutes.postVehicle}',
-        headers: _mainHeaders,
-        body: data,
-      );
+      Response res;
+      if(isVehicleEditMode){
+        res = await httpClient.put(
+          '${ApiRoutes.baseUrl}${ApiRoutes.updateVehicle}/$vehicleId',
+          headers: _mainHeaders,
+          body: data,
+        );
+      } else {
+        res = await httpClient.post(
+          '${ApiRoutes.baseUrl}${ApiRoutes.postVehicle}',
+          headers: _mainHeaders,
+          body: data,
+        );
+      }
       if (validateResponse(res)) {
         onSuccess(res);
       } else {
@@ -865,6 +875,38 @@ class ApiClient extends GetConnect implements GetxService {
     // } catch (err) {
     //   onError(Response(statusCode: 404, body: {'message': '$err'}));
     // }
+  }
+
+  Future<void> sendNotificationToken({
+    required dynamic data,
+    required Function(Response res) onSuccess,
+    required Function(Response error) onError,}) async {
+    Response res = await httpClient.post(
+      '${ApiRoutes.baseUrl}${ApiRoutes.saveFcmToken}',
+      headers: _mainHeaders,
+      body: data,
+    );
+    if (validateResponse(res)) {
+      onSuccess(res);
+    } else {
+      onError(res);
+    }
+  }
+
+  Future<void> unregisterFcmToken({
+    required dynamic data,
+    required Function(Response res) onSuccess,
+    required Function(Response error) onError,}) async {
+    Response res = await httpClient.post(
+      '${ApiRoutes.baseUrl}${ApiRoutes.unregisterFcmToken}',
+      headers: _mainHeaders,
+      body: data,
+    );
+    if (validateResponse(res)) {
+      onSuccess(res);
+    } else {
+      onError(res);
+    }
   }
 
 }

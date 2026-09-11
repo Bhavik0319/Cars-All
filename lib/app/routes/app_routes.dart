@@ -138,4 +138,6 @@ class AppRoutes{
 
   static var pincodeSelection = '/pincodeSelection';
 
+  static String chatUserProfile = '/chatUserProfile';
+
 }

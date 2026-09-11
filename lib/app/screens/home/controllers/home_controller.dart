@@ -77,12 +77,14 @@ class HomeController extends GetxController{
   SocketListener? _conversationSeenListener;
 
 
-
-
-
   @override
   Future<void> onInit() async{
-    Geolocator.requestPermission();
+
+    var permission = await Geolocator.checkPermission();
+
+    if (permission != LocationPermission.always && permission != LocationPermission.whileInUse) {
+      Geolocator.requestPermission();
+    }
     await getAllCategories();
     await getAllVehicles();
     getWishlist();

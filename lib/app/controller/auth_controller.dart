@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import '../interfaces/auth_interface.dart';
 import '../models/enum/user_type.dart';
 import '../screens/auth/OtpDialog.dart';
+import '../services/notification_service.dart';
 import '../utils/customSnackBar.dart';
 
 class AuthController extends GetxController {
@@ -34,7 +35,7 @@ class AuthController extends GetxController {
   RxBool obscurePassword = true.obs;
   RxBool obscureConfirmPassword = true.obs;
   RxBool agreeToTermsRegisterPage = false.obs;
-  RxBool showPhoneNumber = false.obs;
+  RxBool showPhoneNumber = true.obs;
 
   var emailRegex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
@@ -61,6 +62,16 @@ class AuthController extends GetxController {
               canPop: false,
               child: OtpVerificationDialog(
                 onVerify: (otp) async {
+                  Get.dialog(
+                      barrierDismissible: false,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const CircularProgressIndicator(),
+                        ],
+                      )
+                  );
                   await ApiClient.to.loginWithPhone(
                     {
                       "ver_id": verId,
@@ -74,7 +85,6 @@ class AuthController extends GetxController {
                       );
                       StorageService.to.setString(ConstantData.userBearerToken, res.body["token"]);
                       log("token is ${StorageService.to.getString(ConstantData.userBearerToken)}");
-                      // log('${res.body["data"]}');
                       await ApiClient.to.getProfile(
                           onSuccess: (res){
                             UserStore.to.saveProfile(res.body["data"]);
@@ -88,12 +98,33 @@ class AuthController extends GetxController {
                       if(Get.isRegistered<BottomNavController>()){
                         Get.find<BottomNavController>().getUnseenChat();
                       }
+                      await NotificationService().initialize();
+                      Get.back();
                       Get.offAllNamed(AppRoutes.homeNav);
                     },
                     onError: (res) {
+                      Get.back();
                       customSnackBar(
                         type: AnimatedSnackBarType.error,
                         message: res.body["message"],
+                      );
+                    },
+                  );
+                },
+                resendOtp: () async {
+                  await ApiClient.to.otpSendToPhone(
+                    {"userPhone": phone.text},
+                    onSuccess: (res) {
+                      verId = res.body["otp"];
+                      customSnackBar(
+                        type: AnimatedSnackBarType.success,
+                        message: res.body["message"],
+                      );
+                    },
+                    onError: (res) {
+                      customSnackBar(
+                        message: "Failed to resend otp due to: ${res.body['message']}",
+                        type: AnimatedSnackBarType.error,
                       );
                     },
                   );
@@ -189,6 +220,24 @@ class AuthController extends GetxController {
                         customSnackBar(
                           type: AnimatedSnackBarType.error,
                           message: res.body["message"],
+                        );
+                      },
+                    );
+                  },
+                  resendOtp: () async {
+                    await ApiClient.to.otpSendToPhone(
+                      {"userPhone": phone.text},
+                      onSuccess: (res) {
+                        verId = res.body["otp"];
+                        customSnackBar(
+                          type: AnimatedSnackBarType.success,
+                          message: res.body["message"],
+                        );
+                      },
+                      onError: (res) {
+                        customSnackBar(
+                          message: "Failed to resend otp due to: ${res.body['message']}",
+                          type: AnimatedSnackBarType.error,
                         );
                       },
                     );

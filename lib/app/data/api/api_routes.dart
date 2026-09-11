@@ -6,7 +6,7 @@ class ApiRoutes {
 
   /// User APIs
   static String registerUser = 'user/register';
-  static String otpSendToPhone = 'user/otpSendToPhone';
+  static String otpSendToPhone = 'user/logintoAccount';
   static String verifyOtpPhone = 'user/verifyOtpPhone';
   static String loginWithPhone = "user/loginWithPhone";
   static String authVerify = "user/authVerify";
@@ -71,5 +71,10 @@ class ApiRoutes {
 
   /// pincode
   static String pincode = "location/getLocationFromPincode";
+
+  static String saveFcmToken = 'notifications/register-token';
+  static String unregisterFcmToken = 'notifications/unregister-token';
+
+  static var updateVehicle = 'vehicle/updateVehicleDet';
 
 }

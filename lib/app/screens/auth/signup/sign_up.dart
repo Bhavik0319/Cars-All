@@ -25,6 +25,7 @@ class SignUpScreen extends GetView<AuthController> {
 
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<TooltipState> tooltipKey = GlobalKey<TooltipState>();
+  final GlobalKey<TooltipState> showNumberToolTip = GlobalKey<TooltipState>();
 
 
   @override
@@ -94,12 +95,25 @@ class SignUpScreen extends GetView<AuthController> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Image.asset(
-                          'assets/images/info_icon.png',
-                          height: scale.getScaledHeight(12),
+                        GestureDetector(
+                          onTap: (){
+                            showNumberToolTip.currentState?.ensureTooltipVisible();
+                          },
+                          child: Tooltip(
+                            key: showNumberToolTip,
+                            verticalOffset: 20,
+                            margin: scale.getMargin(
+                              horizontal: 20,
+                            ),
+                            message: 'Note: This will show your number to buyers and sellers so deals close faster!',
+                            child: Image.asset(
+                              'assets/images/info_icon.png',
+                              height: scale.getScaledHeight(14),
+                            ),
+                          ),
                         ),
                         SizedBox(
-                          width: scale.getScaledWidth(2),
+                          width: scale.getScaledWidth(4),
                         ),
                         Text(
                           tr('show_number'),

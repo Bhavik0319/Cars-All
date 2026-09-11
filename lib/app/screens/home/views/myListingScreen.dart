@@ -1,4 +1,5 @@
 
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cars_and_alll/app/routes/app_routes.dart';
@@ -161,17 +162,23 @@ import '../../../utils/scale_utility.dart';
                                        Row(
                                          children: [
                                            /// -- Car Image
-                                           Container(
-                                             width: scale.getScaledWidth(80),
-                                             height: scale.getScaledHeight(80),
-                                             margin: scale.getMargin(
-                                               right: 10,
-                                             ),
-                                             child: ClipRRect(
-                                               borderRadius: BorderRadiusGeometry.circular(10),
-                                               child: CustomImageView(
-                                                 path: controller.getAllListingActive[index].vehicleImages!.first,
-                                                 fit: BoxFit.cover,
+                                           GestureDetector(
+                                             onTap: (){
+                                               log("ID: ${controller.getAllListingActive[index].id!}");
+                                               Get.toNamed(AppRoutes.carDetailScreen, parameters: {'vehicleId' : controller.getAllListingActive[index].id!});
+                                             },
+                                             child: Container(
+                                               width: scale.getScaledWidth(80),
+                                               height: scale.getScaledHeight(80),
+                                               margin: scale.getMargin(
+                                                 right: 10,
+                                               ),
+                                               child: ClipRRect(
+                                                 borderRadius: BorderRadiusGeometry.circular(10),
+                                                 child: CustomImageView(
+                                                   path: controller.getAllListingActive[index].vehicleImages!.first,
+                                                   fit: BoxFit.cover,
+                                                 ),
                                                ),
                                              ),
                                            ),
@@ -180,11 +187,16 @@ import '../../../utils/scale_utility.dart';
                                            Column(
                                              crossAxisAlignment: CrossAxisAlignment.start,
                                              children: [
-                                               Text(
-                                                 "${controller.getAllListingActive[index].vehicleFilters!.brand} ${controller.getAllListingActive[index].vehicleFilters!.model}",
-                                                 style: CustomTextStyle.txtPoppins12Black500.copyWith(
-                                                   fontWeight: FontWeight.w400,
-                                                   fontSize: scale.getScaledFont(12),
+                                               SizedBox(
+                                                 width: scale.getScaledWidth(160),
+                                                 child: Text(
+                                                   "${controller.getAllListingActive[index].vehicleFilters!.brand} ${controller.getAllListingActive[index].vehicleFilters!.model}",
+                                                   maxLines: 1,
+                                                   overflow: TextOverflow.ellipsis,
+                                                   style: CustomTextStyle.txtPoppins12Black500.copyWith(
+                                                     fontWeight: FontWeight.w400,
+                                                     fontSize: scale.getScaledFont(12),
+                                                   ),
                                                  ),
                                                ),
                                                SizedBox(
@@ -368,17 +380,22 @@ import '../../../utils/scale_utility.dart';
                                        children: [
 
                                          /// -- Car Image
-                                         Container(
-                                           width: scale.getScaledWidth(80),
-                                           height: scale.getScaledHeight(80),
-                                           margin: scale.getMargin(
-                                             right: 10,
-                                           ),
-                                           child: ClipRRect(
-                                             borderRadius: BorderRadiusGeometry.circular(10),
-                                             child: CustomImageView(
-                                               path: controller.getAllListingSold[index].vehicleImages!.first,
-                                               fit: BoxFit.cover,
+                                         GestureDetector(
+                                           onTap: (){
+                                             Get.toNamed(AppRoutes.carDetailScreen, parameters: {'vehicleId' : controller.getAllListingSold[index].id!});
+                                           },
+                                           child: Container(
+                                             width: scale.getScaledWidth(80),
+                                             height: scale.getScaledHeight(80),
+                                             margin: scale.getMargin(
+                                               right: 10,
+                                             ),
+                                             child: ClipRRect(
+                                               borderRadius: BorderRadiusGeometry.circular(10),
+                                               child: CustomImageView(
+                                                 path: controller.getAllListingSold[index].vehicleImages!.first,
+                                                 fit: BoxFit.cover,
+                                               ),
                                              ),
                                            ),
                                          ),
@@ -387,11 +404,16 @@ import '../../../utils/scale_utility.dart';
                                          Column(
                                            crossAxisAlignment: CrossAxisAlignment.start,
                                            children: [
-                                             Text(
-                                               "${controller.getAllListingSold[index].vehicleFilters!.brand} ${controller.getAllListingSold[index].vehicleFilters!.model}",
-                                               style: CustomTextStyle.txtPoppins12Black500.copyWith(
-                                                 fontWeight: FontWeight.w400,
-                                                 fontSize: scale.getScaledFont(12),
+                                             SizedBox(
+                                               width: scale.getScaledWidth(160),
+                                               child: Text(
+                                                 "${controller.getAllListingSold[index].vehicleFilters!.brand} ${controller.getAllListingSold[index].vehicleFilters!.model}",
+                                                 maxLines: 1,
+                                                 overflow: TextOverflow.ellipsis,
+                                                 style: CustomTextStyle.txtPoppins12Black500.copyWith(
+                                                   fontWeight: FontWeight.w400,
+                                                   fontSize: scale.getScaledFont(12),
+                                                 ),
                                                ),
                                              ),
                                              SizedBox(

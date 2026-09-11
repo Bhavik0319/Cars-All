@@ -53,6 +53,11 @@ class Sender {
 
   Sender({this.id, this.userName});
 
+  @override
+  String toString() {
+    return 'Sender{id: $id, userName: $userName}';
+  }
+
   factory Sender.fromJson(Map<String, dynamic> json) {
     return Sender(
       id: json['_id'] as String?,
@@ -110,8 +115,9 @@ class InquiryVehicle {
   final List<String>? images;
   final VehicleLocation? location;
   final VehicleFilters? filters;
+  final String? vehicleStatus;
 
-  InquiryVehicle({this.id, this.category, this.description, this.askingPrice, this.images, this.location, this.filters});
+  InquiryVehicle({this.id, this.vehicleStatus, this.category, this.description, this.askingPrice, this.images, this.location, this.filters});
 
   factory InquiryVehicle.fromJson(Map<String, dynamic> json) {
     return InquiryVehicle(
@@ -122,6 +128,7 @@ class InquiryVehicle {
       images: json['vehicleImages'] != null ? List<String>.from(json['vehicleImages']) : null,
       location: json['vehicleLocation'] != null ? VehicleLocation.fromJson(json['vehicleLocation']) : null,
       filters: json['vehicleFilters'] != null ? VehicleFilters.fromJson(json['vehicleFilters']) : null,
+      vehicleStatus: json['vehicleStatus']?? '',
     );
   }
 }

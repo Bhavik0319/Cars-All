@@ -50,11 +50,13 @@ class ChatController extends GetxController with GetTickerProviderStateMixin {
   }
 
   onRefresh() async{
+    Get.find<BottomNavController>().getUnseenChat();
     if(currentIndex.value == 0) {
       getBuyerChat();
     } else {
       getSellerChat();
     }
+    _setupSocket();
   }
 
   @override

@@ -13,7 +13,9 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../controller/home_nav_controller.dart';
 import '../../utils/customSnackBar.dart';
+import '../../widgets/decoratedContainer.dart';
 
 class ChatSpaceScreen extends GetView<ChatSpaceController> {
   const ChatSpaceScreen({super.key});
@@ -36,18 +38,24 @@ class ChatSpaceScreen extends GetView<ChatSpaceController> {
                   child: Row(
                     children: [
                       GestureDetector(
-                        onTap: (){
+                        onTap: () async {
+                          await Get.find<BottomNavController>().getUnseenChat();
                           Get.back();
                         },
                         child: const Icon(Icons.arrow_back, color: Colors.white),
                       ),
                       const SizedBox(width: 10),
                       if(!controller.isLoading.value)
-                        CircleAvatar(
-                          backgroundImage: NetworkImage(
-                            controller.otherUser.value.userProfileImage!.first,
+                        GestureDetector(
+                          onTap: (){
+                            Get.toNamed(AppRoutes.chatUserProfile);
+                          },
+                          child: CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              controller.otherUser.value.userProfileImage!.first,
+                            ),
+                            radius: 20,
                           ),
-                          radius: 20,
                         ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -113,15 +121,23 @@ class ChatSpaceScreen extends GetView<ChatSpaceController> {
                         ),
                       ),
                       GestureDetector(onTap: () async {
-                        final Uri uri = Uri.parse('tel:+91${controller.otherUser.value.userPhone}');
-                        try {
-                          await launchUrl(uri);
-                        } catch (e){
+                        if(controller.otherUser.value.isPhoneShare?? false){
+                          final Uri uri = Uri.parse('tel:+91${controller.otherUser.value.userPhone}');
+                          try {
+                            await launchUrl(uri);
+                          } catch (e){
+                            customSnackBar(
+                                type: AnimatedSnackBarType.error,
+                                message: "Could not make a call to ${controller.otherUser.value.userPhone}"
+                            );
+                          }
+                        } else {
                           customSnackBar(
                               type: AnimatedSnackBarType.error,
-                              message: "Could not make a call to ${controller.otherUser.value.userPhone}"
+                              message: "User has disabled phone number sharing."
                           );
                         }
+
                         // Get.toNamed(AppRoutes.callUser);
                       },child: const Icon(Icons.call, color: Colors.white)),
                     ],
@@ -131,74 +147,98 @@ class ChatSpaceScreen extends GetView<ChatSpaceController> {
                 Expanded(
                   child: Container(
                     color: AppColors.backgroundColor,
-                    child: controller.isLoading.value ? const Center(child: CircularProgressIndicator()) : ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: controller.messages.value.length,
-                      reverse: true,
-                      padding: scale.getPadding(
-                        horizontal: 10,
-                        vertical: 10,
-                      ),
-                      itemBuilder: (context, index){
-                        return UserStore.to.uid.value == controller.messages[index].sender!.id ? SenderMessage(
-                          conversationModel: controller.messages[index],
-                          scale: scale,
-                        ) : ReceiverMessage(
-                          conversationModel: controller.messages[index],
-                          scale: scale,
+                    child: controller.isLoading.value ? const Center(child: CircularProgressIndicator()) : Obx(
+                      () {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: controller.messages.value.length,
+                          reverse: true,
+                          padding: scale.getPadding(
+                            horizontal: 10,
+                            vertical: 10,
+                          ),
+                          itemBuilder: (context, index){
+                            return UserStore.to.uid.value == controller.messages[index].sender!.id ? SenderMessage(
+                              conversationModel: controller.messages[index],
+                              scale: scale,
+                            ) : ReceiverMessage(
+                              conversationModel: controller.messages[index],
+                              scale: scale,
+                            );
+                          },
                         );
-                      },
+                      }
                     ),
                   ),
                 ),
-
+                
+                Obx(
+                  () {
+                    return controller.showSold.value ? DecoratedContainer(
+                      width: double.maxFinite,
+                      borderRadius: 0,
+                      borderColor: Colors.transparent,
+                      child: Text(
+                        "Vehicle has been sold",
+                        textAlign: TextAlign.center,
+                        style: CustomTextStyle.txtPoppins12Black500.copyWith(
+                          fontSize: scale.getScaledFont(13),
+                        ),
+                      ),
+                    ) : Container();
+                  }
+                ),
                 // Quick Replies
-                controller.quickReply.value ? Container(
-                  width: double.infinity,
-                  color: AppColors.backgroundColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Obx(
+                  () {
+                    return controller.quickReply.value && !controller.showSold.value ? Container(
+                      width: double.infinity,
+                      color: AppColors.backgroundColor,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Quick replies",
-                            style: CustomTextStyle.txtPoppins14Black700.copyWith(
-                              fontSize: scale.getScaledFont(14),
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.black,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Quick replies",
+                                style: CustomTextStyle.txtPoppins14Black700.copyWith(
+                                  fontSize: scale.getScaledFont(14),
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.black,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  controller.hideQuickReply();
+                                },
+                                child: Icon(
+                                  Icons.close,
+                                  color: AppColors.black,
+                                  size: scale.getScaledFont(20),
+                                ),
+                              )
+                            ],
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              controller.hideQuickReply();
-                            },
-                            child: Icon(
-                              Icons.close,
-                              color: AppColors.black,
-                              size: scale.getScaledFont(20),
-                            ),
-                          )
+                          SizedBox(
+                            height: scale.getScaledHeight(5),
+                          ),
+                          Wrap(
+                            runSpacing: 8,
+                            children: [
+                              _quickReplyButton("Is it still available?"),
+                              _quickReplyButton("What is the lowest price?"),
+                              _quickReplyButton("Can I schedule a test drive?"),
+                              _quickReplyButton("Any major repair done?"),
+                              _quickReplyButton("How many owners?"),
+                            ],
+                          ),
                         ],
                       ),
-                      SizedBox(
-                        height: scale.getScaledHeight(5),
-                      ),
-                      Wrap(
-                        runSpacing: 8,
-                        children: [
-                          _quickReplyButton("Is it still available?"),
-                          _quickReplyButton("What is the lowest price?"),
-                          _quickReplyButton("Can I schedule a test drive?"),
-                          _quickReplyButton("Any major repair done?"),
-                          _quickReplyButton("How many owners?"),
-                        ],
-                      ),
-                    ],
-                  ),
-                ) : Container(),
+                    ) : Container();
+                  }
+                ),
 
                 // Message input
                 Container(
@@ -209,6 +249,7 @@ class ChatSpaceScreen extends GetView<ChatSpaceController> {
                       Expanded(
                         child: TextField(
                           controller: controller.message,
+                          enabled: !controller.showSold.value,
                           style: CustomTextStyle.txtPoppins14Black700.copyWith(
                             fontWeight: FontWeight.w500,
                           ),

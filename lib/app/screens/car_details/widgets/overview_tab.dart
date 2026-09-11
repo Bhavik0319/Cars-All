@@ -152,7 +152,7 @@ class OverviewTab extends GetView<CarDetailController> {
                   ),
                 ),
                 Text(
-                  '${controller.vehicleDetail.value.rtoDetails!.rtoAddress}',
+                  '${controller.vehicleDetail.value.rtoDetails!.rtoState}',
                   style: CustomTextStyle.txtPoppins12Black500.copyWith(
                     color: (controller.vehicleDetail.value.subCategory == 'luxury' || controller.vehicleDetail.value.subCategory == 'premium') ? AppColors.secondaryLight : AppColors.black2020,
                     fontWeight: FontWeight.w400,

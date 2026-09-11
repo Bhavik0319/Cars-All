@@ -4,6 +4,7 @@ import 'package:cars_and_alll/app/routes/app_routes.dart';
 import 'package:cars_and_alll/app/screens/home/controllers/home_controller.dart';
 import 'package:cars_and_alll/app/screens/home/widgets/category_tile.dart';
 import 'package:cars_and_alll/app/screens/home/widgets/homeHeader.dart';
+import 'package:cars_and_alll/app/widgets/decoratedContainer.dart';
 import 'package:cars_and_alll/shared/theme/custom_text_style.dart';
 import 'package:easy_localization/easy_localization.dart' show tr;
 import 'package:flutter/material.dart';
@@ -215,149 +216,33 @@ class HomeScreen extends GetView<HomeController> {
                           );
                         }
                     ),
-
+                    SizedBox(
+                      height: scale.getScaledHeight(20),
+                    ),
                     Container(
-                      alignment: Alignment.center,
                       padding: scale.getPadding(
+                        horizontal: 10,
                         vertical: 20,
-                        horizontal: 20,
                       ),
-                      child: SizedBox(
-                        width: scale.getScaledWidth(220),
-                        child: Text(
-                          tr('trusted'),
-                          textAlign: TextAlign.center,
-                          style: CustomTextStyle.txtPoppins16Black500,
+                      color: AppColors.white,
+                      child: Wrap(
+                        children: List.generate(3, (index) => DecoratedContainer(
+                          margin: scale.getMargin(
+                            left: 10,
+                            right: 10,
+                          ),
+                          padding: scale.getPadding(
+                            vertical: 1,
+                            horizontal: 1
+                          ),
+                          fillColor: AppColors.backgroundColor,
+                          height: scale.getScaledHeight(75),
+                          width: scale.getScaledWidth(90),
+                          image: AssetConstant.appLogoSqr,
+                          child: Container(),
+                        ),
                         ),
                       ),
-                    ),
-                    Container(
-                      margin: scale.getMargin(
-                        horizontal: 80,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Divider(),
-                          ),
-                          SvgPicture.asset(
-                            AssetConstant.carDivider,
-                          ),
-                          Expanded(
-                            child: Divider(),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                        width: double.maxFinite,
-                        height: scale.getScaledHeight(220),
-                        margin: scale.getMargin(
-                          left: 10,
-                          top: 8,
-                          bottom: 24,
-                          right: 10,
-                        ),
-                        child: Obx(
-                          () {
-                            return controller.reels.value.isNotEmpty ? ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: controller.reels.value.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) {
-                                return Container(
-                                  margin: scale.getMargin(
-                                    left: 10,
-                                  ),
-                                  width: scale.getScaledWidth(138),
-                                  padding: scale.getPadding(
-                                    top: 8,
-                                    bottom: 12,
-                                    left: 6,
-                                    right: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      image: DecorationImage(
-                                        image: NetworkImage(controller.reels[index].thumbnailUrl!),
-                                        fit: BoxFit.cover,
-                                      )
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundColor: AppColors.splashBackground,
-                                        radius: scale.getScaledFont(12),
-                                        backgroundImage: AssetImage(
-                                          AssetConstant.appLogoSqr,
-                                        ),
-                                      ),
-                                      Center(
-                                        child: IconButton(
-                                          onPressed: () {
-                                            Get.toNamed(AppRoutes.reelsScreen);
-                                          },
-                                          icon: Icon(
-                                            Icons.play_arrow_outlined,
-                                            color: AppColors.white,
-                                            size: scale.getScaledFont(40),
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: scale.getPadding(
-                                          all: 10,
-                                        ),
-                                        width: scale.getScaledWidth(125),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(6),
-                                          color: Color(0xff202020).withOpacity(0.73),
-                                        ),
-                                        child: Text(
-                                          '${controller.reels[index].caption!.capitalizeFirst}',
-                                          textAlign: TextAlign.start,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: CustomTextStyle.txtPoppins10W400.copyWith(
-                                            color: AppColors.secondaryLight,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: scale.getScaledFont(11),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                );
-                              },
-                            ) : false ? SizedBox(
-                              width: scale.fw,
-                              child: Column(
-                                children: [
-                                  Lottie.asset(
-                                    "assets/no_data.json",
-                                    width: 200,
-                                    height: 200,
-                                    fit: BoxFit.fill,
-                                  ),
-                                  Text(
-                                    tr('no_data_found'),
-                                    style: CustomTextStyle.txtPoppins14Black700,
-                                  )
-                                ],
-                              ),
-                            ) : SizedBox(
-                              width: double.maxFinite,
-                              height: double.maxFinite,
-                              child: Image.asset(
-                                AssetConstant.comingSoon,
-                                fit: BoxFit.cover,
-                              ),
-                            );
-                          }
-                        )
                     ),
                     // Container(
                     //   padding: scale.getPadding(

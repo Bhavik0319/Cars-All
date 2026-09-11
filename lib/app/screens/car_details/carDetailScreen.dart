@@ -75,7 +75,7 @@ class CarDetailScreen extends GetView<CarDetailController> {
                               final box = context.findRenderObject() as RenderBox?;
 
                               await Share.share(
-                                'https://carsandallweb.netlify.app/${controller.vehicleDetail.value.category}/${controller.vehicleDetail.value.subCategory}/${controller.vehicleDetail.value.filters!.brand!.toLowerCase().replaceAll(' ', '-')}-${controller.vehicleDetail.value.filters!.model!.toLowerCase().replaceAll(' ', '-')}/${controller.vehicleDetail.value.id}',
+                                'https://carsandallweb.netlify.app/vehicle/${controller.vehicleDetail.value.category}/${controller.vehicleDetail.value.subCategory}/${controller.vehicleDetail.value.filters!.brand!.toLowerCase().replaceAll(' ', '-')}-${controller.vehicleDetail.value.filters!.model!.toLowerCase().replaceAll(' ', '-')}/${controller.vehicleDetail.value.id}',
                                 subject: 'Checkout this product',
                                 sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
                               );

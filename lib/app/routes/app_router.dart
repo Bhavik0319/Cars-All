@@ -48,6 +48,7 @@ import '../screens/auth/login/login_with_phone_screen.dart';
 import '../screens/car_details/carDetailScreen.dart';
 import '../screens/car_details/car_image_screen.dart';
 import '../screens/chat/chat_screen.dart';
+import '../screens/chat/user_profile.dart';
 import '../screens/cibil/addVehicleDetailsScreen.dart';
 import '../screens/cibil/cibilScoreScreen.dart';
 import '../screens/cibil/getVehicleDetailsScreen.dart';
@@ -387,6 +388,10 @@ class AppRouter {
       name: AppRoutes.chatScreen,
       page: () => const ChatScreen(),
       binding: ChatBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.chatUserProfile,
+      page: () => const ChatUserProfile(),
     ),
     GetPage(
       name: AppRoutes.sellersChatSpace,

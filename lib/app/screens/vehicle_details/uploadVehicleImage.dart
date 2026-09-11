@@ -18,7 +18,6 @@ import '../../utils/scale_utility.dart';
 class UploadVehicleImage extends GetView<PostNewAddController> {
   const UploadVehicleImage({super.key});
 
-
   Future<void> pickMultipleImagesFromCamera(ImageSource source) async {
     try {
       if(source == ImageSource.camera){

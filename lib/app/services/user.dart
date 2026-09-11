@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'package:cars_and_alll/app/data/api/api_client.dart';
 import 'package:cars_and_alll/app/models/userLocation_model.dart';
 import 'package:cars_and_alll/app/routes/app_routes.dart';
+import 'package:cars_and_alll/app/services/notification_service.dart';
 import 'package:get/get.dart';
 
 import '../models/user_model.dart';
@@ -58,6 +61,7 @@ class UserStore extends GetxController {
     await StorageService.to.remove(userBearerToken);
     _isLogin.value = false;
     uid.value = '';
+    NotificationService().unregisterFcmToken();
     Get.offAllNamed(AppRoutes.loginWithPhone);
   }
 
@@ -96,6 +100,16 @@ class UserStore extends GetxController {
 
   Future<void> setToken(String token) async {
     await StorageService.to.setString(userBearerToken, token);
+  }
+
+  void setFcmToken(String token) {
+    StorageService.to.setString('fcmToken', token);
+    var fcm = getFcmToken();
+  }
+
+  getFcmToken() {
+    print("FCM Notification token: ${StorageService.to.getString('fcmToken')}");
+    return StorageService.to.getString('fcmToken');
   }
 
 }

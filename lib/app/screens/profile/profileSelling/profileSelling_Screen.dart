@@ -448,13 +448,19 @@ class ProfileSellingScreen extends GetView<ProfileController> {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      trailing: Switch(
-                        value: isSwitched,
-                        activeTrackColor: AppColors.secondaryLight,
-                        activeColor: Colors.white,
-                        inactiveThumbColor: AppColors.primaryLight,
-                        onChanged: (e) {},
-                      ),
+                      trailing: Obx(
+                        () {
+                          return Switch(
+                            value: controller.isSwitched.value,
+                            activeTrackColor: AppColors.secondaryLight,
+                            activeColor: Colors.white,
+                            inactiveThumbColor: AppColors.primaryLight,
+                            onChanged: (e) {
+                              controller.checkNotificationPermission();
+                            },
+                          );
+                        }
+                      )
                     ),
                     Container(
                       margin: scale.getMargin(

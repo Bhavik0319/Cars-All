@@ -12,7 +12,8 @@ import '../../../shared/color/app_color.dart';
 
 class OtpVerificationDialog extends StatefulWidget {
   final Function(String) onVerify;
-  const OtpVerificationDialog({super.key, required this.onVerify});
+  final Function() resendOtp;
+  const OtpVerificationDialog({super.key, required this.onVerify, required this.resendOtp});
 
   @override
   _OtpVerificationDialogState createState() => _OtpVerificationDialogState();
@@ -151,11 +152,16 @@ class _OtpVerificationDialogState extends State<OtpVerificationDialog> {
                             color: AppColors.primaryLight
                         ),
                       ),
-                      Text(
-                        " ${tr('resend_now')}",
-                        style: CustomTextStyle.txtPoppins12Black500.copyWith(
-                            fontSize: 14,
-                            color: AppColors.primaryLight
+                      GestureDetector(
+                        onTap: (){
+                          widget.resendOtp();
+                        },
+                        child: Text(
+                          " ${tr('resend_now')}",
+                          style: CustomTextStyle.txtPoppins12Black500.copyWith(
+                              fontSize: 14,
+                              color: AppColors.primaryLight
+                          ),
                         ),
                       ),
                     ],

@@ -29,6 +29,8 @@ class PostNewAddController extends GetxController {
   RxString fuelType = ''.obs;
   RxString priceTyp = ''.obs;
 
+  bool isVehicleEditModel = false;
+
   TextEditingController priceController = TextEditingController();
   TextEditingController detailComment = TextEditingController();
   TextEditingController kmDriven = TextEditingController();
@@ -38,6 +40,7 @@ class PostNewAddController extends GetxController {
   var modelName = TextEditingController();
   var registrationYear = TextEditingController();
   var rtoState = TextEditingController();
+  var hoursOperated = TextEditingController();
 
   RxList<String> allSubCategories = <String>['Choose sub-category'].obs;
 
@@ -55,14 +58,32 @@ class PostNewAddController extends GetxController {
       ApiClient.to.getVehicleDetails(
         id: Get.arguments['vehicleId'],
         onSuccess: (res) {
+          vehicleId = Get.arguments['vehicleId'];
+          isVehicleEditModel = true;
           vehicleDetail.value = VehicleDetailModel.fromJson(res.body['data']);
           vehicleImages.value = vehicleDetail.value.images!;
-          if(vehicleDetail.value.category! == 'ev') {
-            category.value = vehicleDetail.value.category!.capitalize!;
+          if(vehicleDetail.value.category! == 'ev' || vehicleDetail.value.category! == 'Ev') {
+            category.value = vehicleDetail.value.category!.toUpperCase();
           }else{
             category.value = vehicleDetail.value.category!.capitalizeFirst!;
           }
-          subCategory.value = vehicleDetail.value.subCategory!.capitalizeFirst!;
+          if(category.value == 'Cars'){
+            allSubCategories.value = ["Choose sub-category", "Cars", "Vintage Cars",'Luxury Cars'];
+          } else if(category.value == 'Bikes'){
+            allSubCategories.value = ["Choose sub-category", "Bikes", "Scooter", "Premium Bikes",'Vintage Bikes'];
+          }else if(category.value == 'EV'){
+            allSubCategories.value = ["Choose sub-category", "Electric Cars", 'Electric Bikes', 'Commercial EVs', 'Others'];
+          }else if(category.value == 'Commercial'){
+            allSubCategories.value = ["Choose sub-category", "Cars", 'Trucks', 'Flatbeds', 'LCVs', 'Buses','Others'];
+          }else if(category.value == 'Machinery'){
+            allSubCategories.value = ["Choose sub-category", "Tractors", 'Bulldozer', 'Excavators', 'Cranes', 'Forklift', 'Concrete Mixers', 'Harvesters','Others'];
+          } else {
+            allSubCategories.value = ["Choose sub-category"];
+          }
+          int matchedValue = allSubCategories.indexWhere(
+            (subCategory) => subCategory.toLowerCase().startsWith(vehicleDetail.value.subCategory!.toLowerCase()),
+          );
+          subCategory.value = allSubCategories[matchedValue];
           transmission.value = vehicleDetail.value.filters!.transmissionType!;
           seatingCapacity.value = vehicleDetail.value.filters!.seatingCapacity!;
           owner.value = vehicleDetail.value.filters!.ownerType!;
@@ -71,6 +92,9 @@ class PostNewAddController extends GetxController {
           priceTyp.value = vehicleDetail.value.priceType!;
           priceController.text = vehicleDetail.value.askingPrice!.toString();
           detailComment.text = vehicleDetail.value.description!;
+          if(category.value == 'Machinery'){
+            hoursOperated.text = vehicleDetail.value.filters!.hoursOperated!.toString();
+          }
           kmDriven.text = vehicleDetail.value.filters!.kmsDriven!.toString();
           vehicleNumber.text = vehicleDetail.value.rtoDetails!.rtoCode!;
           pinCode.text = vehicleDetail.value.location!.pincode!;
@@ -95,19 +119,6 @@ class PostNewAddController extends GetxController {
           modelName.text = vehicleDetail.value.filters!.model!;
           registrationYear.text = vehicleDetail.value.filters!.registrationYear!.toString();
 
-          if(category.value == 'Cars'){
-            allSubCategories.value = ["Choose sub-category", "Cars", "Vintage Cars",'Luxury Cars'];
-          } else if(category.value == 'Bikes'){
-            allSubCategories.value = ["Choose sub-category", "Bikes", "Scooter", "Premium Bikes",'Luxury Bikes'];
-          }else if(category.value == 'EV'){
-            allSubCategories.value = ["Choose sub-category", "Electric Cars", 'Electric Bikes', 'Commercial EVs', 'Others'];
-          }else if(category.value == 'Commercial'){
-            allSubCategories.value = ["Choose sub-category", "Cars", 'Trucks', 'Flatbeds', 'LCVs', 'Buses','Others'];
-          }else if(category.value == 'Machinery'){
-            allSubCategories.value = ["Choose sub-category", "Tractors", 'Bulldozer', 'Excavators', 'Cranes', 'Forklift', 'Concrete Mixers', 'Harvesters','Others'];
-          } else {
-            allSubCategories.value = ["Choose sub-category"];
-          }
         },
         onError: (res) {
           customSnackBar(
@@ -238,8 +249,9 @@ class PostNewAddController extends GetxController {
             "fuelType": fuelType.value,
             "transmissionType": category.value == 'Cars' ? transmission.value : '',
             "ownerType": owner.value,
+            "hoursOperated" : category.value == 'Machinery' ? int.tryParse(hoursOperated.text) : null,
             "bodyType": category.value == 'Cars' ? bodyType.value : '',
-            "seatingCapacity": category.value == 'Cars' ? seatingCapacity.value : ''
+            "seatingCapacity": category.value == 'Cars' ? seatingCapacity.value : '',
           },
           "vehicle_rto_details": {
             "RTO_Code": vehicleNumber.text.substring(0, 4),
@@ -248,6 +260,8 @@ class PostNewAddController extends GetxController {
             "RTO_address": "RTO DATA ADDRESS"
           }
         },
+        isVehicleEditMode: isVehicleEditModel,
+        vehicleId: vehicleId,
         onSuccess: (res) {
           Get.back();
           customSnackBar(

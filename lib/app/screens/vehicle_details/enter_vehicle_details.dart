@@ -324,7 +324,6 @@ class EnterVehicleDetails extends GetView<PostNewAddController> {
                     padding: scale.getPadding(right: 3),
                     child: TextFormField(
                       controller: controller.brandName,
-                      enabled: false,
                       style: CustomTextStyle.txtPoppins14Black700.copyWith(
                         fontWeight: FontWeight.w400,
                         color: AppColors.black828282,
@@ -378,7 +377,6 @@ class EnterVehicleDetails extends GetView<PostNewAddController> {
                     padding: scale.getPadding(right: 3),
                     child: TextFormField(
                       controller: controller.modelName,
-                      enabled: false,
                       style: CustomTextStyle.txtPoppins14Black700.copyWith(
                         fontWeight: FontWeight.w400,
                         color: AppColors.black828282,
@@ -785,7 +783,78 @@ class EnterVehicleDetails extends GetView<PostNewAddController> {
                   ),
                   Obx(
                     () {
-                      return controller.category.value != "Cars" ? Container() : Column(
+                      return controller.category.value != "Cars" ? controller.category.value != "Machinery" ? Container() : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${tr('Hours Operated (hrs*)')}*',
+                            style: CustomTextStyle.txtPoppins12Black500.copyWith(
+                              fontSize: scale.getScaledFont(12),
+                              color: AppColors.black828282,
+                            ),
+                          ),
+                          SizedBox(
+                            height: scale.getScaledHeight(5),
+                          ),
+                          Padding(
+                            padding: scale.getPadding(right: 3),
+                            child: Padding(
+                              padding: scale.getPadding(right: 3),
+                              child: TextFormField(
+                                enabled: true,
+                                controller: controller.hoursOperated,
+                                keyboardType: TextInputType.number,
+                                style: CustomTextStyle.txtPoppins14Black700.copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.black828282,
+                                ),
+                                decoration: InputDecoration(
+                                  hint: Text(
+                                    'Enter value',
+                                    style: CustomTextStyle.txtPoppins10W400.copyWith(
+                                      fontSize: scale.getScaledFont(12),
+                                    ),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color(0xffBDBDBD),
+                                      width: 1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color(0xffBDBDBD),
+                                      width: 1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      width: 1,
+                                      color: Color(0xffBDBDBD),
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      width: 1,
+                                      color: Color(0xffBDBDBD),
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                validator: (value){
+                                  if(controller.hoursOperated.text == ''){
+                                    return "Enter hours value";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ) : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(

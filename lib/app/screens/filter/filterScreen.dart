@@ -240,7 +240,7 @@ class FilterScreen extends StatelessWidget {
                                   }
                               ),
                             ),
-                            Obx(
+                            controller.filterCategory != 'bikes' ? Obx(
                                     () {
                                   return FilterTile(
                                     text: 'Seating Capacity',
@@ -251,8 +251,10 @@ class FilterScreen extends StatelessWidget {
                                     isActive: controller.currentTab.value == 10,
                                   );
                                 }
+                            ): SizedBox(
+                              height: scale.getScaledHeight(20),
                             ),
-                            Container(
+                            controller.filterCategory == 'machinery' ? Container(
                               margin: scale.getMargin(
                                 bottom: 20,
                                 top: 20,
@@ -269,6 +271,8 @@ class FilterScreen extends StatelessWidget {
                                     );
                                   }
                               ),
+                            ) : SizedBox(
+                              height: scale.getScaledHeight(20),
                             ),
                           ],
                         ),
@@ -649,7 +653,7 @@ class FilterScreen extends StatelessWidget {
                                                           : controller.currentTab.value == 9
                                                           ? formatWithCommas(int.tryParse(controller.priceRange.value.start.toStringAsFixed(0)))
                                                           : controller.currentTab.value == 11
-                                                          ? formatWithCommas(int.tryParse(controller.hoursOperator.value.start.toStringAsFixed(0)))
+                                                          ? formatWithCommas(int.tryParse(controller.hoursOperator.value.start.toStringAsFixed(0))).substring(1)
                                                           : '',
                                                       style: CustomTextStyle.txtPoppins12Black500.copyWith(
                                                         fontWeight: FontWeight.w400,
@@ -677,11 +681,11 @@ class FilterScreen extends StatelessWidget {
                                                       controller.currentTab.value == 3
                                                           ? '${controller.manufacturer.value.end.toStringAsFixed(0)}'
                                                           : controller.currentTab.value == 5
-                                                          ? '${formatWithCommas(int.tryParse(controller.kmDriven.value.end.toStringAsFixed(0))).substring(1)} km'
+                                                          ? '${formatWithCommas(int.tryParse(controller.kmDriven.value.end.toStringAsFixed(0))).substring(1)}${controller.kmDriven.value.end == controller.rangeKmDriven[1] ? "+" : ""} km'
                                                           : controller.currentTab.value == 9
                                                           ? formatWithCommas(int.tryParse(controller.priceRange.value.end.toStringAsFixed(0)))
                                                           : controller.currentTab.value == 11
-                                                          ? formatWithCommas(int.tryParse(controller.hoursOperator.value.end.toStringAsFixed(0)))
+                                                          ? formatWithCommas(int.tryParse(controller.hoursOperator.value.end.toStringAsFixed(0))).substring(1)
                                                           : '',
                                                       style: CustomTextStyle.txtPoppins12Black500.copyWith(
                                                         fontWeight: FontWeight.w400,

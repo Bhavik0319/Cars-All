@@ -172,6 +172,14 @@ class CarDetailController extends GetxController {
         }
       },
       onError: (res) {
+        if(res.statusCode == 401){
+          Get.toNamed(AppRoutes.loginWithPhone);
+        }else {
+          customSnackBar(
+            type: AnimatedSnackBarType.error,
+            message: res.body["message"],
+          );
+        }
         customSnackBar(
           type: AnimatedSnackBarType.error,
           message: res.body["message"],
@@ -223,6 +231,14 @@ class CarDetailController extends GetxController {
         },
         onError: (res) {
           Get.back();
+          if(res.statusCode == 401){
+            Get.toNamed(AppRoutes.loginWithPhone);
+          }else {
+            customSnackBar(
+              type: AnimatedSnackBarType.error,
+              message: res.body["message"],
+            );
+          }
           customSnackBar(
             type: AnimatedSnackBarType.error,
             message: 'Failed to fetch performance overview due to: ${res.body}',
@@ -261,6 +277,7 @@ class CarDetailController extends GetxController {
       },
       onError: (res) {
         Get.back();
+
         if(res.body['message'].toString().startsWith("Invalid Authentication")){
           Get.toNamed(AppRoutes.loginWithPhone);
         }else {

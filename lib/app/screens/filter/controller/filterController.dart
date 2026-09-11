@@ -31,9 +31,9 @@ class FilterController extends GetxController{
 
 
   Rx<TransmissionType> transmissionType = TransmissionType.MANUAL.obs;
-  Rx<SfRangeValues> priceRange = SfRangeValues(0, 1000000).obs;
+  Rx<SfRangeValues> priceRange = SfRangeValues(0, 5000000).obs;
   Rx<SfRangeValues> manufacturer = SfRangeValues(2000, DateTime.now().year).obs;
-  Rx<SfRangeValues> kmDriven = SfRangeValues(0, 500000).obs;
+  Rx<SfRangeValues> kmDriven = SfRangeValues(0, 1000000).obs;
   Rx<SfRangeValues> hoursOperator = SfRangeValues(0, 500000).obs;
 
   ///Values To Take From Backend
@@ -234,8 +234,8 @@ class FilterController extends GetxController{
 
   List<dynamic> allTransmissionTypes = [];
   List<int> rangeManufacturer = [1950, DateTime.now().year];
-  List<int> rangeKmDriven = [0, 10000000];
-  List<int> availablePriceRange = [0, 10000000];
+  List<int> rangeKmDriven = [0, 1000000];
+  List<int> availablePriceRange = [0, 50000000];
   List<int> hoursOperatorRange = [0, 1000000];
 
   @override
@@ -281,7 +281,7 @@ class FilterController extends GetxController{
       ],
       "fuelTypes": ["Electric"],
       "transmissionTypes": ["Automatic"],
-      "bodyTypes": ["SUV", "Scooter"],
+      "bodyTypes": ["SUV", "Scooter", "Commercial"],
       "seatingCapacities": ["2", "5", "7"],
     },
     "commercial": {
@@ -605,7 +605,6 @@ class FilterController extends GetxController{
     isSelectAll.value = false;
     isSearchEnable.value = false;
     searchFields.value.clear();
-
     selectedBrandName.value.clear();
     selectedModelName.value.clear();
     selectedBodyType.value.clear();
@@ -615,9 +614,9 @@ class FilterController extends GetxController{
     selectedSittingCapacity.value.clear();
     rtoTextField.text = "";
     transmissionType.value = TransmissionType.MANUAL;
-    priceRange.value = SfRangeValues(0, 1000000);
+    priceRange.value = SfRangeValues(0, 5000000);
     manufacturer.value = SfRangeValues(2000, DateTime.now().year);
-    kmDriven.value = SfRangeValues(0, 500000);
+    kmDriven.value = SfRangeValues(0, 1000000);
     hoursOperator.value = SfRangeValues(0, 500000);
   }
 }

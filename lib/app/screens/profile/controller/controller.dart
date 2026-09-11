@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:cars_and_alll/app/services/storage.dart';
 import 'package:cars_and_alll/app/utils/customSnackBar.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -109,31 +110,54 @@ class ProfileController extends GetxController with GetSingleTickerProviderState
 
   Future<void> checkNotificationPermission() async {
     // 1. Check current status
-    PermissionStatus status = await Permission.notification.status;
-    log("Current status: $status");
-
-    if(isSwitched.value){
+    // PermissionStatus status = await Permission.notification.status;
+    // log("Current status: $status");
+    //
+    // if(isSwitched.value){
+    //   isSwitched.value = false;
+    // } else {
+    //   if (status.isGranted) {
+    //     log("Permission already granted");
+    //     isSwitched.value = true;
+    //   } else if (status.isDenied) {
+    //     log("Permission is denied. Requesting now...");
+    //
+    //     // 2. This actually prompts the user OS dialog
+    //     PermissionStatus newStatus = await Permission.notification.request();
+    //
+    //     if (newStatus.isGranted) {
+    //       log("Permission granted by user");
+    //       isSwitched.value = true;
+    //     } else {
+    //       log("Permission denied by user");
+    //       isSwitched.value = false;
+    //     }
+    //   } else if (status.isPermanentlyDenied) {
+    //     log("Permission permanently denied. Opening settings...");
+    //     isSwitched.value = false;
+    //     await openAppSettings();
+    //   }
+    // }
+    if (isSwitched.value) {
       isSwitched.value = false;
+      // Note: iOS has no API to revoke permission from app-side; this just
+      // stops your app from acting on notifications (unsubscribe from topics, etc.)
+      return;
+    }
+
+    final settings = await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+        settings.authorizationStatus == AuthorizationStatus.provisional) {
+      isSwitched.value = true;
     } else {
-      if (status.isGranted) {
-        log("Permission already granted");
-        isSwitched.value = true;
-      } else if (status.isDenied) {
-        log("Permission is denied. Requesting now...");
-
-        // 2. This actually prompts the user OS dialog
-        PermissionStatus newStatus = await Permission.notification.request();
-
-        if (newStatus.isGranted) {
-          log("Permission granted by user");
-          isSwitched.value = true;
-        } else {
-          log("Permission denied by user");
-          isSwitched.value = false;
-        }
-      } else if (status.isPermanentlyDenied) {
-        log("Permission permanently denied. Opening settings...");
-        isSwitched.value = false;
+      isSwitched.value = false;
+      if (settings.authorizationStatus == AuthorizationStatus.denied) {
+        // Already decided before — iOS won't re-prompt, send to Settings
         await openAppSettings();
       }
     }

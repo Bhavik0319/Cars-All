@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:cars_and_alll/app/controller/home_nav_controller.dart';
 import 'package:cars_and_alll/app/data/api/api_client.dart';
 import 'package:cars_and_alll/app/models/conversationModel.dart';
 import 'package:cars_and_alll/app/services/user.dart';
@@ -16,6 +17,7 @@ class ChatSpaceController extends GetxController {
   String conversationId = "";
   RxBool isLoading = true.obs;
   RxBool quickReply = false.obs;
+  RxBool showSold = false.obs;
 
   TextEditingController message = TextEditingController();
 
@@ -38,7 +40,6 @@ class ChatSpaceController extends GetxController {
   SocketListener? _conversationSeenListener;
   bool _joinedRoom = false;
 
-
   @override
   void onInit() {
     super.onInit();
@@ -50,6 +51,7 @@ class ChatSpaceController extends GetxController {
   Future<void> onReady() async {
     super.onReady();
     await getConversation();
+    await Get.find<BottomNavController>().getUnseenChat();
   }
 
   getConversation(){
@@ -68,11 +70,18 @@ class ChatSpaceController extends GetxController {
         topBar.value = InquiryModel.fromJson(res.body["topbardata"]);
         autoFollowUp.value = topBar.value.autoFollowUp!;
         if(topBar.value.seller!.id == UserStore.to.uid.value){
-          quickReply.value = false;
+          hideQuickReply();
         } else {
-          quickReply.value = true;
+          if(messages.value.length > 3) {
+            hideQuickReply();
+          } else {
+            quickReply.value = true;
+          }
         }
         otherUser.value = (topBar.value.seller!.id == UserStore.to.uid.value ? topBar.value.buyer : topBar.value.seller)!;
+        if(topBar.value.vehicle!.vehicleStatus == "SOLD"){
+          showSold.value = true;
+        }
         isLoading.value = false;
       },
       onError: (res){
@@ -100,6 +109,8 @@ class ChatSpaceController extends GetxController {
         },
         onSuccess: (res) {
           message.clear();
+          print("Message sent successfully: ${ConversationModel.fromJson(res.body['data']['latestMessage'])}");
+          messages.insert(0, ConversationModel.fromJson(res.body['data']['latestMessage']));
         },
         onError: (res) {
           customSnackBar(
@@ -124,12 +135,11 @@ class ChatSpaceController extends GetxController {
     _joinedRoom = true;
 
     _newMessageListener = _socket.onNewMessage((data) {
+      print("New message received=============================\n$data");
       final latestRaw = data['latestMessage'];
       if (latestRaw == null) return;
       log(data.toString());
       final incoming = ConversationModel.fromJson(latestRaw);
-
-      messages.insert(0, incoming);
 
       final rest = data['restObject'];
       if (rest != null) {
@@ -146,12 +156,10 @@ class ChatSpaceController extends GetxController {
 
       // Notify only when the incoming message is from the other party.
       final isFromOtherUser = incoming.sender?.id != UserStore.to.uid.value;
-      if (isFromOtherUser) {
-        customSnackBar(
-          type: AnimatedSnackBarType.success,
-          message: "New message from ${otherUser.value.userName ?? 'user'}",
-        );
+      if(isFromOtherUser){
+        messages.insert(0, incoming);
       }
+
     });
 
     _conversationSeenListener = _socket.onConversationSeen((data) {
@@ -164,6 +172,7 @@ class ChatSpaceController extends GetxController {
       }
     });
   }
+
 
   @override
   void onClose() {

@@ -31,6 +31,8 @@ class MyListingController extends GetxController{
   }
 
   Future<void> getAllListingByUser() async {
+    getAllListingActive.clear();
+    getAllListingSold.clear();
     await ApiClient.to.getAllListingByUser(
       onSuccess: (res) {
         for(var vehicle in res.body['vehicles']){
@@ -94,8 +96,8 @@ class MyListingController extends GetxController{
         "vehicleId": vehicleId,
       },
       onSuccess: (res) {
-        Get.back();
         updateVehicleStatus(vehicleId);
+        Get.back();
       },
       onError: (res) {
         customSnackBar(

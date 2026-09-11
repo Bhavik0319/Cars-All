@@ -137,6 +137,7 @@ class VehicleFilters {
   final String? ownerType;
   final String? bodyType;
   final String? seatingCapacity;
+  final int? hoursOperated;
 
   VehicleFilters({
     this.brand,
@@ -148,6 +149,7 @@ class VehicleFilters {
     this.ownerType,
     this.bodyType,
     this.seatingCapacity,
+    this.hoursOperated,
   });
 
   factory VehicleFilters.fromJson(Map<String, dynamic> json) {
@@ -161,6 +163,7 @@ class VehicleFilters {
       ownerType: json['ownerType'] as String?,
       bodyType: json['bodyType'] as String?,
       seatingCapacity: json['seatingCapacity']?.toString(), // Safely convert "5" to String
+      hoursOperated: json['hrOperator'] as int?,
     );
   }
 }

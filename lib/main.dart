@@ -1,5 +1,7 @@
 import 'package:cars_and_alll/shared/theme/theme_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +12,7 @@ import 'app/data/api/api_client.dart';
 import 'app/routes/app_router.dart';
 import 'app/routes/app_routes.dart';
 import 'app/services/auth_services.dart';
+import 'app/services/notification_service.dart';
 import 'app/services/storage.dart';
 import 'app/services/user.dart';
 import 'dart:ui' as ui;
@@ -18,12 +21,28 @@ import 'app/data/dl_container.dart' as di;
 
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
+import 'firebase_options.dart';
+
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  print('Background message: ${message.messageId}');
+}
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   await EasyLocalization.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -57,13 +76,28 @@ Future<void> main() async {
       ],
       path: 'assets/language',
       fallbackLocale: Locale('en'),
+      // Pass initial chat id (if app was launched from a notification)
       child: ProviderScope(child: MyApp()),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+    super.initState();
+    if(UserStore.to.getFcmToken() != null || UserStore.to.getFcmToken() != "") {
+      NotificationService().initialize();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -52,7 +52,7 @@ class ViewAllController extends GetxController{
       'subCategory': ['bikes', 'scooters', 'premium', 'vintage'],
     },
     "ev": {
-      'subCategory': ['ev','cars', 'bikes', 'commercial'],
+      'subCategory': ['ev','ev cars', 'ev bikes', 'ev commercial'],
     },
     "commercial": {
       'subCategory': ['commercial', 'cars', 'trucks', 'lcvs', 'buses', 'flatbeds'],

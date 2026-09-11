@@ -190,9 +190,17 @@ class ViewAllVehicles extends GetView<ViewAllController> {
                           return GestureDetector(
                             onTap: () {
                               if(index == 0){
-                                controller.selectedSubCategory.value = controller.initialSubCategory[index];
+                                if(controller.initialCategory.value == 'ev'){
+                                  controller.selectedSubCategory.value = controller.initialSubCategory[index].split(" ").last;
+                                }else {
+                                  controller.selectedSubCategory.value = controller.initialSubCategory[index];
+                                }
                               }else {
-                                controller.selectedSubCategory.value = controller.initialSubCategory[index];
+                                if(controller.initialCategory.value == 'ev'){
+                                  controller.selectedSubCategory.value = controller.initialSubCategory[index].split(" ").last;
+                                }else {
+                                  controller.selectedSubCategory.value = controller.initialSubCategory[index];
+                                }
                               }
                               controller.applyFilter();
                             },
@@ -201,10 +209,10 @@ class ViewAllVehicles extends GetView<ViewAllController> {
                                 fillColor: index == 0
                                     ? controller.selectedSubCategory.value == ""
                                       ? AppColors.secondaryLight
-                                      : controller.selectedSubCategory.value == controller.initialSubCategory[index]
+                                      : controller.selectedSubCategory.value == controller.initialSubCategory[index].split(' ').last
                                         ? AppColors.secondaryLight
                                         : AppColors.white
-                                    : controller.selectedSubCategory.value == controller.initialSubCategory[index]
+                                    : controller.selectedSubCategory.value == controller.initialSubCategory[index].split(' ').last
                                       ? AppColors.secondaryLight
                                       : AppColors.white,
                                 padding: scale.getPadding(
@@ -213,23 +221,27 @@ class ViewAllVehicles extends GetView<ViewAllController> {
                                 margin: scale.getMargin(
                                   horizontal: 5,
                                 ),
-                                image: (controller.initialSubCategory[index] == 'premium' || controller.initialSubCategory[index] == 'luxury') && (controller.selectedSubCategory.value != controller.initialSubCategory[index])
+                                image: (controller.initialSubCategory[index] == 'premium' || controller.initialSubCategory[index] == 'luxury') && (controller.selectedSubCategory.value != controller.initialSubCategory[index].split(' ').last)
                                     ? "assets/logo/lux_bg.jpg"
                                     : null,
                                 borderRadius: 6,
                                 child: Align(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    '${controller.initialSubCategory[index].capitalizeFirst}',
+                                    controller.initialSubCategory[index].split(" ").length > 1
+                                        ? '${controller.initialSubCategory[index].split(" ").first.toUpperCase()} ${controller.initialSubCategory[index].split(" ").last.capitalizeFirst}'
+                                        : controller.initialCategory.value == 'ev'
+                                        ? controller.initialSubCategory[index].toUpperCase()!
+                                        : controller.initialSubCategory[index].capitalizeFirst!,
                                     style: CustomTextStyle.txtPoppins14Black700.copyWith(
                                       fontSize: scale.getScaledFont(12),
                                       color: index == 0
                                           ? controller.selectedSubCategory.value == ""
                                             ? AppColors.black
-                                            : controller.selectedSubCategory.value == controller.initialSubCategory[index]
+                                            : controller.selectedSubCategory.value == controller.initialSubCategory[index].split(' ').last
                                               ? AppColors.black
                                               : AppColors.secondaryLight
-                                          : controller.selectedSubCategory.value == controller.initialSubCategory[index]
+                                          : controller.selectedSubCategory.value == controller.initialSubCategory[index].split(' ').last
                                             ? AppColors.black
                                             : AppColors.secondaryLight,
                                     ),
@@ -399,7 +411,7 @@ class ViewAllVehicles extends GetView<ViewAllController> {
                               color: AppColors.secondaryLight,
                             ),
                           ) : controller.vehicles.value.isNotEmpty ? Wrap(
-                            runSpacing: 6,
+                            runSpacing: 8,
                             children: List.generate(
                               controller.vehicles.value.length,
                               (index) => VehicleTile(
