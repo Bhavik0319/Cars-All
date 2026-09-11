@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "260332430920",
+    "project_id": "carsandall-9c024",
+    "storage_bucket": "carsandall-9c024.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260332430920:android:ba8baf3cf8bf864494da7d",
+        "android_client_info": {
+          "package_name": "com.example.cars_and_alll"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBK1ruci6fviwxtLZpWAzYkEgBoGiFGL8M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
